@@ -7,23 +7,30 @@
 #define DATA_PIN 2
 
 /**
- * Defines the analog input pin used for reading the audio signal.
+ * Defines the analog input pin used for reading the audio signal,
+ *  and the output PIN to pilot the ARGB led strip (WS2812B)
  */
 #define AUDIO_PIN A0
+#define ARGB_PIN 13 // D10
 
 /**
  * Conditionally enables or disables debug printing based on the value of the DEBUG macro.
  * If DEBUG is set to 1, the DEBUG_PRINT and DEBUG_PRINTLN macros will output the provided
  * arguments to the Serial port. If DEBUG is set to 0, the macros will do nothing.
  * This allows for easy toggling of debug output without having to remove the print statements.
+ * 
+ * Call DEBUG_SETUP() in the setup function, to enable (or not) the serial mode.
+ * Do not call it, if you use Serial.begin in your code
  */
 #define DEBUG 0 // Set to 0 for deactivate debug mode
 #if DEBUG
 #define DEBUG_PRINT(x) Serial.print(x)
 #define DEBUG_PRINTLN(x) Serial.println(x)
+#define DEBUG_SETUP()   Serial.begin(115200)
 #else
 #define DEBUG_PRINT(x)
 #define DEBUG_PRINTLN(x)
+#define DEBUG_SETUP()
 #endif
 
 /**
@@ -122,7 +129,7 @@ void setup()
    * The number of LEDs in the strip is specified by the NUM_LEDS macro.
    */
   FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
-  pinMode(13, OUTPUT); // sets the digital pin 13 as output
+  pinMode(ARGB_PIN, OUTPUT); // sets the digital pin 13 as output
 
   /**
    * Iterates through the LED strip and sets the color of each LED based on its position in the strip.
@@ -154,7 +161,7 @@ void setup()
    * This allows the Arduino board to communicate with a computer or other serial devices.
    * The serial communication can be used for debugging, sending/receiving data, or other purposes.
    */
-  Serial.begin(9600);
+  DEBUG_SETUP();
 }
 
 /**
