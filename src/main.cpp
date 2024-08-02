@@ -1,5 +1,6 @@
 #include <FastLED.h>
 #include <Arduino.h>
+#include "main.h"
 
 /**
  * Defines the digital pin used to output the LED data signal.
@@ -13,25 +14,6 @@
 #define AUDIO_PIN A0
 #define ARGB_PIN 13 // D10
 
-/**
- * Conditionally enables or disables debug printing based on the value of the DEBUG macro.
- * If DEBUG is set to 1, the DEBUG_PRINT and DEBUG_PRINTLN macros will output the provided
- * arguments to the Serial port. If DEBUG is set to 0, the macros will do nothing.
- * This allows for easy toggling of debug output without having to remove the print statements.
- * 
- * Call DEBUG_SETUP() in the setup function, to enable (or not) the serial mode.
- * Do not call it, if you use Serial.begin in your code
- */
-#define DEBUG 0 // Set to 0 for deactivate debug mode
-#if DEBUG
-#define DEBUG_PRINT(x) Serial.print(x)
-#define DEBUG_PRINTLN(x) Serial.println(x)
-#define DEBUG_SETUP()   Serial.begin(115200)
-#else
-#define DEBUG_PRINT(x)
-#define DEBUG_PRINTLN(x)
-#define DEBUG_SETUP()
-#endif
 
 /**
  * Defines the size of the sample window in milliseconds for measuring sound amplitude.
@@ -281,9 +263,12 @@ void loop()
   {
     float rms = calculateRMS();
 
-    DEBUG_PRINTLN(rms);
+    // DEBUG metric for Teleplot pluggin
+    DEBUG_METRIC( F("rms"), rms ); // F() indicates that the string is stored in Flash, not in RAM
+
 
     updateLEDs(rms);
     lastUpdateTime = currentTime;
   }
 }
+
